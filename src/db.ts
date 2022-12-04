@@ -1,5 +1,7 @@
 export interface DbItem {
-  // sketch out interface here
+  name: string;
+  summary: string;
+  status: string;
 }
 
 export interface DbItemWithId extends DbItem {
@@ -12,23 +14,6 @@ const db: DbItemWithId[] = [];
 let idCounter = 0;
 
 /**
- * Adds in some dummy database items to the database
- *
- * @param n - the number of items to generate
- * @returns the created items
- */
-export const addDummyDbItems = (n: number): DbItemWithId[] => {
-  const createdSignatures: DbItemWithId[] = [];
-  for (let count = 0; count < n; count++) {
-    const createdSignature = addDbItem({
-      // possibly add some generated data here
-    });
-    createdSignatures.push(createdSignature);
-  }
-  return createdSignatures;
-};
-
-/**
  * Adds in a single item to the database
  *
  * @param data - the item data to insert in
@@ -39,7 +24,7 @@ export const addDbItem = (data: DbItem): DbItemWithId => {
     id: ++idCounter,
     ...data,
   };
-  db.push(newEntry);
+  db.unshift(newEntry);
   return newEntry;
 };
 
@@ -55,6 +40,9 @@ export const deleteDbItemById = (id: number): DbItemWithId | "not found" => {
   if (typeof idxToDeleteAt === "number") {
     const itemToDelete = getDbItemById(id);
     db.splice(idxToDeleteAt, 1); // .splice can delete from an array
+    if (db.length === 0) {
+      idCounter = 0;
+    }
     return itemToDelete;
   } else {
     return "not found";
